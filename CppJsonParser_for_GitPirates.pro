@@ -5,6 +5,7 @@ CONFIG -= qt
 
 SOURCES += \
     app.cpp \
+    lib/loeschmich.cpp \
     lib/loeschmich.cpp
 
 
