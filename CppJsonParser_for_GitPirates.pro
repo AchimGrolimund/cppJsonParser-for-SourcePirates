@@ -6,6 +6,12 @@ CONFIG -= qt
 SOURCES += \
     app.cpp \
 
+HEADERS += \
+    json.hpp
+
+DISTFILES += \
+    test.json
+
 
 
 
