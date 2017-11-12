@@ -28,10 +28,10 @@ string line;
 	json j;
 	j << file;
 
-
+setw(4);
 	for (auto it = j["menu"].begin(); it != j["menu"].end(); ++it)
 	{
-		std::cout << it.key() << " | " << it.value() << "\n";
+		std::cout  << it.key() << " | " << it.value() << "\n";
 	}
 
 
