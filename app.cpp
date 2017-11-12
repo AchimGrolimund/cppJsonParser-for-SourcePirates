@@ -29,7 +29,7 @@ string line;
 	j << file;
 
 setw(4);
-	for (auto it = j["menu"].begin(); it != j["menu"].end(); ++it)
+	for (auto it = j["player"].begin(); it != j["player"].end(); ++it)
 	{
 		std::cout  << it.key() << " | " << it.value() << "\n";
 	}
