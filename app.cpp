@@ -29,8 +29,15 @@ string line;
 	j << file;
 
 
+	for (auto it = j["menu"].begin(); it != j["menu"].end(); ++it)
+	{
+		std::cout << it.key() << " | " << it.value() << "\n";
+	}
 
 
-	cout << j << endl<< endl<< endl;
+
+
+
+	//cout << j << endl<< endl<< endl;
 	return 0;
 }
