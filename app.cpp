@@ -10,32 +10,18 @@ using json = nlohmann::json;
 
 int main()
 {
-string line;
+	string line;
 	ifstream file("../test.json");
-
-//	if (file.is_open())
-//	  {
-//		while ( getline (file,line) )
-//		{
-//		  cout << line << '\n';
-//		}
-//		file.close();
-//	  }
-//	  else cout << "Unable to open file";
-//	return 0;
-
 
 	json j;
 	j << file;
 
-setw(4);
+	setw(4);
+
 	for (auto it = j["player"].begin(); it != j["player"].end(); ++it)
 	{
 		std::cout  << it.key() << " | " << it.value() << "\n";
 	}
-
-
-
 
 
 	//cout << j << endl<< endl<< endl;
