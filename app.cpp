@@ -16,7 +16,8 @@ int main()
 	json j;
 	j << file;
 
-	setw(4);
+
+	cout << j["player"]["color"] << endl;
 
 	for (auto it = j["player"].begin(); it != j["player"].end(); ++it)
 	{
@@ -24,6 +25,5 @@ int main()
 	}
 
 
-	//cout << j << endl<< endl<< endl;
 	return 0;
 }
