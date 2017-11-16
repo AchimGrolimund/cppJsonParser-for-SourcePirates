@@ -7,7 +7,8 @@ SOURCES += \
     app.cpp \
 
 HEADERS += \
-    json.hpp
+    json.hpp \
+    cppwrapper.h
 
 DISTFILES += \
     test.json
