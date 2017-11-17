@@ -1,22 +1,12 @@
 #include <iostream>
-#include <fstream>
-#include <string>
-#include "cppwrapper.h"
-
-
+#include "SourcePirates.h"
 
 using namespace std;
 using json = nlohmann::json;
 
-int main()
-{
+int main() {
+    SourcePirates gameObj("");
 
-
-	//	for (auto it = j["player"].begin(); it != j["player"].end(); ++it)
-	//	{
-	//		std::cout  << it.key() << " | " << it.value() << "\n";
-	//	}
-
-
-	return 0;
+    cout << gameObj.arrMap->at(32).at(32) << endl;
+    return 0;
 }
