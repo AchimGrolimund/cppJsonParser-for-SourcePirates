@@ -37,15 +37,18 @@ SourcePirates::SourcePirates(std::string strIoFolder) {
 
 
     //Create Map Array
+
+	// 0 = Frei // 1 = Gesperrt
     arrMap = new std::vector<std::vector<int>>(64, std::vector<int>(64));
     //Fill vector vector matrix => map
     int x(0), y(0);
     for (auto val1 : input["map"]) {
         for (auto val : val1) {
-            arrMap->at(x).at(y) = val;
+			arrMap->at(y).at(x) = val;
             y++;
         }
         x++;
         y = 0;
     }
-};
+
+}

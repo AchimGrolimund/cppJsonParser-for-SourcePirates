@@ -8,7 +8,7 @@ SOURCES += \
 
 HEADERS += \
     json.hpp \
-    cppwrapper.h
+    SourcePirates.h
 
 DISTFILES += \
     test.json
