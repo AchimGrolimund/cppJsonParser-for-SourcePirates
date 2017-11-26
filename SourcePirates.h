@@ -7,6 +7,7 @@
 #include <vector>
 #include <array>
 #include <ostream>
+#include <utility>
 
 using json = nlohmann::json;
 
@@ -239,6 +240,7 @@ struct Player : public Players{
 class SourcePirates {
 private:
     std::array<std::array<int, 64>, 64> arrMap;
+    json arrOutput;
 public:
     int turn;
     explicit SourcePirates(std::string strIoFolder);
@@ -249,8 +251,91 @@ public:
     Player player;
     std::vector<Players> players;
     int numTurn = 0;
-
     std::string arrLocalSession;
+    std::vector<Players> getPlayers(){
+        return players;
+    }
+
+    Players getPlayer(std::string id){
+        for(auto &val : players){
+            if(val.id == id){
+                return val;
+            }
+        }
+        return Players();
+    }
+    Players getPlayerByCoords(int x, int y){
+        for(auto &val : players){
+            if(val.x == x && val.y == y){
+                return val;
+            }
+        }
+        return Players();
+    }
+    Player getMyPlayer(){
+        return player;
+    }
+    Specials getSpecials(){
+        return specials;
+    }
+    std::vector<Coin> getCoins(){
+        return specials.coins;
+    }
+    std::vector<Blocks> getBlocks(){
+        return specials.blocks;
+    }
+    std::vector<Enemy> getEnemys(){
+        return specials.enemys;
+    }
+    std::vector<Coin> getStarts(){
+        return specials.start;
+    }
+    std::vector<Coin> getEnds(){
+        return specials.end;
+    }
+    void actionMoveForward(){
+        this->arrOutput["order"] = "MOVE_FORWARDS";
+    }
+    void actionMoveBackwards(){
+        this->arrOutput["order"] = "MOVE_BACKWARDS";
+    }
+    void actionTurnLeft(){
+        this->arrOutput["order"] = "TURN_LEFT";
+    }
+    void actionTurnRight(){
+        this->arrOutput["order"] = "TURN_RIGHT";
+    }
+    void actionLoadCanon(){
+        this->arrOutput["order"] = "LOAD_CANON";
+    }
+    void actionFireCannon(std::string direction, int power){
+        if(direction == "left" || direction == "right"){
+            if(power > 0 && power < 6){
+                auto jOut = R"(
+                    {
+                        "ORDER" : {
+                            "FIRE_CANNON" : {
+                                "cannon" : "right",
+                                "power" : 1
+                            }
+                        }
+                    }
+                )"_json;
+                jOut["ORDER"]["FIRE_CANNON"]["cannon"] = direction;
+                jOut["ORDER"]["FIRE_CANNON"]["power"] = power;
+                this->arrOutput = jOut;
+            }
+        }
+    }
+
+    void executeOrders(){
+        writeOutputFile();
+    }
+
+    void writeOutputFile(){
+        std::ofstream str("output.json");
+        str << this->arrOutput;
+    }
 };
 
 #endif // SOURCEPIRATES_H

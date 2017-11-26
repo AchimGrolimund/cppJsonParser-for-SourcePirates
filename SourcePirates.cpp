@@ -71,7 +71,7 @@ SourcePirates::SourcePirates(std::string strIoFolder) {
     player.status = input["player"]["status"];
     player.id = input["player"]["id"];
 
-    for(auto ply : input["players"]){
+    for(auto &ply : input["players"]){
     players.emplace_back(ply["id"], ply["name"], ply["color"], ply["health"], ply["loads"], ply["direction"], ply["pos_x"], ply["pos_y"]);
     }
 }

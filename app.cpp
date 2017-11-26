@@ -317,6 +317,9 @@ int main() {
     cout << gameObj.specials << endl;
     cout << gameObj.player << endl;
     cout << gameObj.players << endl;
+
+    gameObj.actionFireCannon("right", 3);
+    gameObj.executeOrders();
     //auto res = getPath(map, coins, myCord);
 
     //buildDrivePath(res, myCord, directionToInt("W"));
