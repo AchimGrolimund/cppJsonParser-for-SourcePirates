@@ -11,121 +11,76 @@
 
 using json = nlohmann::json;
 
+/**
+ * Parameter struct with "trigger" and "value"
+ */
 struct Param {
     std::string trigger;
     int value;
-    Param() : value(0){};
+    Param() : value(0) {};
 };
 
-struct EnemyParam{
+/**
+ * EnemyParam struct for params of enemys
+ */
+struct EnemyParam {
     std::string id;
     int health;
     std::string name;
     std::string color;
-    EnemyParam() : id(""), health(0), name(""), color(""){};
+    EnemyParam();
 };
 
-struct Coin {
+/**
+ * Struct to save coordinats;
+ */
+struct Cord {
     int x;
     int y;
-    Coin(): x(0), y(0){};
-    Coin(int pos_x, int pos_y) : x(pos_x), y(pos_y) {};
-    friend std::ostream &operator<<(std::ostream &stream, Coin &obj){
-        stream << "Coin: " << obj.x << " : " << obj.y;
-        return stream;
-    }
+    Cord() : x(0), y(0) {};
+    Cord(int pos_x, int pos_y);
+    friend std::ostream &operator<<(std::ostream &stream, Cord &obj);
 };
 
+/**
+ * Struct to Save the blocks
+ */
 class Blocks : public Param {
 public:
     int x;
     int y;
     Param param;
-    Blocks(int x, int y, std::string trigger, int value) : x(x), y(y){
-        param.trigger = trigger;
-        param.value = value;
-    };
-    friend std::ostream &operator<<(std::ostream &stream, Blocks &obj){
-        stream << "Param:" << std::endl;
-        stream << "\t" << "Trigger: " << obj.param.trigger << std::endl;
-        stream << "\t" << "Value: " << obj.param.value << std::endl;
-        stream << "Position: " << std::endl;
-        stream << "\t" << obj.x << " : " << obj.y << std::endl;
-        return stream;
-    }
+    Blocks(int x, int y, std::string trigger, int value);
+    friend std::ostream &operator<<(std::ostream &stream, Blocks &obj);
 };
 
-struct Enemy : public EnemyParam{
+/**
+ * Struct to save Enemys
+ */
+struct Enemy : public EnemyParam {
     int x;
     int y;
     EnemyParam param;
-    Enemy(int x, int y, std::string id, int health, std::string name, std::string color) : x(x), y(y){
-        param.id = id;
-        param.health = health;
-        param.name = name;
-        param.color = color;
-    }
-    friend std::ostream &operator<<(std::ostream &stream, Enemy &obj){
-        stream << "Param: " << std::endl;
-        stream << "\t" << "Id: " << obj.param.id << std::endl;
-        stream << "\t" << "Health: " << obj.param.health << std::endl;
-        stream << "\t" << "Name: " << obj.param.name << std::endl;
-        stream << "\t" << "Color: " << obj.param.color << std::endl;
-        stream << "Position: " << std::endl;
-        stream << "\t" << obj.x << " : " << obj.y << std::endl;
-        return stream;
-    }
+    Enemy(int x, int y, std::string id, int health, std::string name, std::string color);
+    friend std::ostream &operator<<(std::ostream &stream, Enemy &obj);
 };
 
+/**
+ * Struct with all specials inside
+ */
 struct Specials {
-    std::vector<Coin> coins;
+    std::vector<Cord> coins;
     std::vector<Blocks> blocks;
     std::vector<Enemy> enemys;
-    std::vector<Coin> start;
-    std::vector<Coin> end;
-    friend std::ostream &operator<<(std::ostream &stream, Specials &obj){
-        int count = 0;
-        stream << "Coins" << std::endl;
-        stream << "===========" << std::endl;
-        for(auto &val : obj.coins){
-            stream << val << std::endl;
-            count++;
-        }
-        stream << "===========" << std::endl;
-        stream << "Blocks" << std::endl;
-        stream << "===========" << std::endl;
-        count = 0;
-        for(auto &val : obj.blocks){
-            stream << "Block: " << count << std::endl;
-            stream << val << std::endl;
-            count++;
-        }
-        stream << "===========" << std::endl;
-        stream << "Enemys" << std::endl;
-        stream << "===========" << std::endl;
-        count = 0;
-        for(auto &val : obj.enemys){
-            stream << "Enemy: " << count << std::endl;
-            stream << val << std::endl;
-            count++;
-        }
-        stream << "===========" << std::endl;
-        stream << "Start" << std::endl;
-        for(auto &val : obj.start){
-            stream << val.x << " : " << val.y << std::endl;
-        }
-        stream << "===========" << std::endl;
-        stream << "End " << std::endl;
-        for(auto &val : obj.end){
-            stream << val.x << " : " << val.y << std::endl;
-        }
-        stream << "===========" << std::endl;
-
-        return stream;
-    }
+    std::vector<Cord> start;
+    std::vector<Cord> end;
+    friend std::ostream &operator<<(std::ostream &stream, Specials &obj);
 };
 
-struct Players {
+/**
+ * Player struct -> same for player and players
+ */
+struct Player {
     std::string id;
     std::string name;
     std::string color;
@@ -134,208 +89,70 @@ struct Players {
     std::string direction;
     int x;
     int y;
-    Players() : id(""), name(""), color(""), health(0), loads(0), direction(""), x(0), y(0){};
-    Players(
-            std::string id,
-            std::string name,
-            std::string color,
-            int health,
-            int loads,
-            std::string direction,
-            int x,
-            int y
-    ) :
-            id(id),
-            name(name),
-            color(color),
-            health(health),
-            loads(loads),
-            direction(direction),
-            x(x),
-            y(y)
-    {};
-
-    friend std::ostream &operator<<(std::ostream &stream, Players &obj){
-        stream << "ID: " << obj.id << std::endl;
-        stream << "Name: " << obj.name << std::endl;
-        stream << "Color: " << obj.color << std::endl;
-        stream << "Health: " << obj.health << std::endl;
-        stream << "Loads: " << obj.loads << std::endl;
-        stream << "Direction: " << obj.direction << std::endl;
-        stream << "Position: " << obj.x << " : " << obj.y << std::endl;
-        return stream;
-    }
-    friend std::ostream &operator<<(std::ostream &stream, std::vector<Players> &obj){
-        stream << "Players" << std::endl;
-        stream << "=====================" << std::endl;
-        for(auto val : obj){
-            stream << val;
-        }
-        stream << "=====================" << std::endl;
-        return stream;
-    }
+    Player();
+    Player(std::string id, std::string name, std::string color, int health, int loads, std::string direction, int x, int y);
+    friend std::ostream &operator<<(std::ostream &stream, Player &obj);
+    friend std::ostream &operator<<(std::ostream &stream, std::vector<Player> &obj);
 };
 
-struct Player : public Players{
-    std::string lang;
-    std::string executable;
-    std::string iofolder;
-    int score;
-    bool qualified;
-    std::string status;
-    Player(){};
-
-    Player(
-            std::string &name,
-            std::string &color,
-            std::string &lang,
-            std::string &executable,
-            std::string &iofolder,
-            int &score,
-            bool &qualified,
-            int &x,
-            int &y,
-            std::string &direction,
-            std::string &status,
-            std::string &id,
-            int &health,
-            int &loads
-    ) :
-            lang(lang),
-            executable(executable),
-            iofolder(iofolder),
-            score(score),
-            qualified(qualified),
-            status(status)
-    {
-        this->name = name;
-        this->color = color;
-        this->direction = direction;
-        this->id = id;
-        this->health = health;
-        this->loads = loads;
-    }
-
-    friend std::ostream &operator<<(std::ostream &stream, Player &obj){
-        stream << "Player" << std::endl;
-        stream << "=====================" << std::endl;
-        stream << "Lang: " << obj.lang << std::endl;
-        stream << "Executable: " << obj.executable << std::endl;
-        stream << "Iofolder: " << obj.iofolder << std::endl;
-        stream << "Score: " << obj.score << std::endl;
-        stream << "Qualified: " << obj.qualified << std::endl;
-        stream << "Status: " << obj.status << std::endl;
-        stream << "ID: " << obj.id << std::endl;
-        stream << "Name: " << obj.name << std::endl;
-        stream << "Color: " << obj.color << std::endl;
-        stream << "Health: " << obj.health << std::endl;
-        stream << "Loads: " << obj.loads << std::endl;
-        stream << "Direction: " << obj.direction << std::endl;
-        stream << "Position: " << obj.x << " : " << obj.y << std::endl;
-        stream << "=====================" << std::endl;
-        return stream;
-    }
-};
-
+/**
+ * SourcePirates Class
+ */
 class SourcePirates {
 private:
-    std::array<std::array<int, 64>, 64> arrMap;
     json arrOutput;
-public:
+    std::array<std::array<int, 64>, 64> arrMap;
     int turn;
-    explicit SourcePirates(std::string strIoFolder);
-    std::array<std::array<int, 64>, 64> getMap() const;
-    void printMap();
-    int getMapFieldByCoords(int numX, int numY);
-    Specials specials;
     Player player;
-    std::vector<Players> players;
-    int numTurn = 0;
+    std::vector<Player> players;
     std::string arrLocalSession;
-    std::vector<Players> getPlayers(){
-        return players;
-    }
+    Specials specials;
+    void writeOutputFile() ;
+public:
 
-    Players getPlayer(std::string id){
-        for(auto &val : players){
-            if(val.id == id){
-                return val;
-            }
-        }
-        return Players();
-    }
-    Players getPlayerByCoords(int x, int y){
-        for(auto &val : players){
-            if(val.x == x && val.y == y){
-                return val;
-            }
-        }
-        return Players();
-    }
-    Player getMyPlayer(){
-        return player;
-    }
-    Specials getSpecials(){
-        return specials;
-    }
-    std::vector<Coin> getCoins(){
-        return specials.coins;
-    }
-    std::vector<Blocks> getBlocks(){
-        return specials.blocks;
-    }
-    std::vector<Enemy> getEnemys(){
-        return specials.enemys;
-    }
-    std::vector<Coin> getStarts(){
-        return specials.start;
-    }
-    std::vector<Coin> getEnds(){
-        return specials.end;
-    }
-    void actionMoveForward(){
-        this->arrOutput["order"] = "MOVE_FORWARDS";
-    }
-    void actionMoveBackwards(){
-        this->arrOutput["order"] = "MOVE_BACKWARDS";
-    }
-    void actionTurnLeft(){
-        this->arrOutput["order"] = "TURN_LEFT";
-    }
-    void actionTurnRight(){
-        this->arrOutput["order"] = "TURN_RIGHT";
-    }
-    void actionLoadCanon(){
-        this->arrOutput["order"] = "LOAD_CANON";
-    }
-    void actionFireCannon(std::string direction, int power){
-        if(direction == "left" || direction == "right"){
-            if(power > 0 && power < 6){
-                auto jOut = R"(
-                    {
-                        "ORDER" : {
-                            "FIRE_CANNON" : {
-                                "cannon" : "right",
-                                "power" : 1
-                            }
-                        }
-                    }
-                )"_json;
-                jOut["ORDER"]["FIRE_CANNON"]["cannon"] = direction;
-                jOut["ORDER"]["FIRE_CANNON"]["power"] = power;
-                this->arrOutput = jOut;
-            }
-        }
-    }
+    explicit SourcePirates(std::string strIoFolder);
 
-    void executeOrders(){
-        writeOutputFile();
-    }
+    std::array<std::array<int, 64>, 64> getMap() const;
 
-    void writeOutputFile(){
-        std::ofstream str("output.json");
-        str << this->arrOutput;
-    }
+    void printMap();
+
+    int getMapFieldByCoords(int numX, int numY);
+
+    int numTurn = 0;
+
+    std::vector<Player> getPlayers() ;
+
+    Player getPlayer(std::string id) ;
+
+    Player getPlayerByCoords(int x, int y) ;
+
+    Player getMyPlayer() ;
+
+    Specials getSpecials() ;
+
+    std::vector<Cord> getCoins() ;
+
+    std::vector<Blocks> getBlocks() ;
+
+    std::vector<Enemy> getEnemys() ;
+
+    std::vector<Cord> getStarts() ;
+
+    std::vector<Cord> getEnds() ;
+
+    void actionMoveForward() ;
+
+    void actionMoveBackwards() ;
+
+    void actionTurnLeft() ;
+
+    void actionTurnRight() ;
+
+    void actionLoadCanon() ;
+
+    void actionFireCannon(std::string direction, int power) ;
+
+    void executeOrders() ;
 };
 
 #endif // SOURCEPIRATES_H

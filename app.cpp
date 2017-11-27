@@ -1,85 +1,91 @@
 #include <iostream>
 #include <ostream>
 #include "SourcePirates.h"
+#include <string>
 
 using namespace std;
 using json = nlohmann::json;
 
-struct Cord {
+struct Cords {
     int x;
     int y;
 
-    Cord(int x, int y) : x(x), y(y) {};
+    Cords(int x, int y) : x(x), y(y) {};
 
-    Cord &operator=(const Cord &obj) {
+    Cords &operator=(const Cords &obj) {
         this->x = obj.x;
         this->y = obj.y;
         return *this;
     }
 
-    Cord &operator=(const Coin &obj) {
+    Cords &operator=(const Cord &obj) {
         this->x = (unsigned int) obj.x;
         this->y = (unsigned int) obj.y;
         return *this;
     }
 
-    Cord operator-(const Cord &obj) {
-        Cord result(this->x - obj.x, this->y - obj.y);
+    Cords operator-(const Cords &obj) {
+        Cords result(this->x - obj.x, this->y - obj.y);
         return result;
     }
 
-    Cord operator+(const Cord &obj) {
-        Cord result(this->x + obj.x, this->y + obj.y);
+    Cords operator-(const Cord &obj) {
+        Cords result(this->x - obj.x, this->y - obj.y);
         return result;
+    }
+
+    Cords operator+(const Cords &obj) {
+        Cords result(this->x + obj.x, this->y + obj.y);
+        return result;
+    }
+
+    bool operator==(const Cords &obj) {
+        return (this->x == obj.x && this->y == obj.y);
     }
 
     bool operator==(const Cord &obj) {
         return (this->x == obj.x && this->y == obj.y);
     }
 
-    bool operator==(const Coin &obj) {
-        return (this->x == obj.x && this->y == obj.y);
-    }
-
-    bool operator!=(const Cord &obj) {
+    bool operator!=(const Cords &obj) {
         return (this->x != obj.x || this->y != obj.y);
     }
 
-    friend ostream &operator<<(ostream &stream, Cord &obj) {
+    friend ostream &operator<<(ostream &stream, Cords &obj) {
         stream << obj.x << " : " << obj.y;
     }
 };
 
 
-vector<Cord> getNeighbours(array<array<int, 64>, 64> &map, Cord from) {
-    vector<Cord> result;
+vector<Cords> getNeighbours(array<array<int, 64>, 64> &map, Cords from) {
+    vector<Cords> result;
     //cout << "GetNeighbours" << from.x << " : " << from.y << endl;
     //cout << "Map at : " << map->at(from.y).at(from.x) << endl;
     //cout << from.x << " : " << from.y << endl;
 
     if (map[from.x + 1][from.y] == 0) {
-        result.emplace_back(Cord(from.x + 1, from.y));
+        result.emplace_back(Cords(from.x + 1, from.y));
     }
     if (map[from.x - 1][from.y] == 0) {
-        result.emplace_back(Cord(from.x - 1, from.y));
+        result.emplace_back(Cords(from.x - 1, from.y));
     }
     if (map[from.x][from.y + 1] == 0) {
-        result.emplace_back(Cord(from.x, from.y + 1));
+        result.emplace_back(Cords(from.x, from.y + 1));
     }
     if (map[from.x][from.y - 1] == 0) {
-        result.emplace_back(Cord(from.x, from.y - 1));
+        result.emplace_back(Cords(from.x, from.y - 1));
     }
-    if (map[from.x + 1][from.y + 1] == 0) {
-        result.emplace_back(Cord(from.x + 1, from.y + 1));
+    if (map[from.x + 1][from.y + 1] == 0 && map[from.x + 1][from.y] == 0 && map[from.x][from.y + 1] == 0) {
+        result.emplace_back(Cords(from.x + 1, from.y + 1));
     }
-    if (map[from.x + 1][from.y - 1] == 0) {
-        result.emplace_back(Cord(from.x + 1, from.y - 1));
+    if (map[from.x + 1][from.y - 1] == 0&& map[from.x + 1][from.y] == 0 && map[from.x][from.y - 1] == 0) {
+        result.emplace_back(Cords(from.x + 1, from.y - 1));
     }
-    if (map[from.x - 1][from.y + 1] == 0) {
-        result.emplace_back(Cord(from.x - 1, from.y + 1));
+    if (map[from.x - 1][from.y + 1] == 0 && map[from.x - 1][from.y] == 0 && map[from.x][from.y + 1] == 0) {
+        result.emplace_back(Cords(from.x - 1, from.y + 1));
     }
-    if (map[from.x - 1][from.y - 1] == 0) {
-        result.emplace_back(Cord(from.x - 1, from.y - 1));
+    if (map[from.x - 1][from.y - 1] == 0 && map[from.x - 1][from.y] == 0 && map[from.x][from.y - 1] == 0) {
+        result.emplace_back(Cords(from.x - 1, from.y - 1));
     }
 
     return result;
@@ -87,17 +93,17 @@ vector<Cord> getNeighbours(array<array<int, 64>, 64> &map, Cord from) {
 
 struct Entry {
     int distance = -1;
-    Cord cord = Cord(0, 0);
-    Cord pre = Cord(-1, -1);
+    Cords cord = Cords(0, 0);
+    Cords pre = Cords(-1, -1);
     bool marked = false;
 
-    void setValues(Cord cord, bool marked = false) {
+    void setValues(Cords cord, bool marked = false) {
         this->cord = cord;
         this->marked = marked;
     }
 };
 
-void getPath(array<array<int, 64>, 64> &map, vector<Entry> &visited, vector<Coin> &coins, Cord cord, Cord &res, int lastSum = 0) {
+void getPath(array<array<int, 64>, 64> &map, vector<Entry> &visited, vector<Cord> &coins, vector<Cords> &visitedCoins, Cords cord, Cords &res, int lastSum = 0) {
     //cout << "GetPath 1 => " << cord.x << " : " << cord.y << endl;
     int i = 0;
 
@@ -116,27 +122,30 @@ void getPath(array<array<int, 64>, 64> &map, vector<Entry> &visited, vector<Coin
     visited[64 * cord.y + cord.x].distance = lastSum;
 
 
-    vector<Coin>::iterator it;
+    vector<Cord>::iterator it;
+    vector<Cords>::iterator it2;
     auto check = coins.end();
-    if(cord == Cord(42, 28)){
-        cout << "Found" << endl;
-    }
-    for(it = coins.begin(); it != coins.end(); it++){
-        if(cord == *it){
-            res = *it;
+    it2 = find(visitedCoins.begin(), visitedCoins.end(), cord);
+    if (it2 == visitedCoins.end()) {
+        for (it = coins.begin(); it != coins.end(); it++) {
+            if (cord == *it) {
+                res = *it;
+                return;
+            }
         }
     }
 
-    if(res == cord){
+    if (res == cord) {
         return;
     }
+
 
     auto neighbours = getNeighbours(map, cord);
     if (neighbours.empty()) {
         return;
     };
     //cout << "Have Neighbors" << neighbours.size() << endl;
-    for_each(neighbours.begin(), neighbours.end(), [&](const Cord &cords) {
+    for_each(neighbours.begin(), neighbours.end(), [&](const Cords &cords) {
         if (!visited[64 * cords.y + cords.x].marked) {
             if (visited[64 * cords.y + cords.x].distance == -1) {
                 visited[64 * cords.y + cords.x].distance = lastSum + 1;
@@ -153,7 +162,7 @@ void getPath(array<array<int, 64>, 64> &map, vector<Entry> &visited, vector<Coin
 
     int min_dis = 0;
     bool first = true;
-    Cord min_cord(0, 0);
+    Cords min_cord(0, 0);
     for_each(visited.begin(), visited.end(), [&first, &min_dis, &min_cord](const Entry &obj) {
         if (first && obj.distance != -1 && !obj.marked) {
             //cout << "First : " << obj.cord.x << " : " << obj.cord.y << endl;
@@ -170,20 +179,36 @@ void getPath(array<array<int, 64>, 64> &map, vector<Entry> &visited, vector<Coin
     if (min_dis != 0) {
         //cout << "Get Path => Min: " << min_dis << " : " << min_cord.x << " - " << min_cord.y << endl;
         if (min_cord.x == 0 || min_cord.y == 0) return;
-        getPath(map, visited, coins, min_cord, res, min_dis);
+        getPath(map, visited, coins, visitedCoins, min_cord, res, min_dis);
     }
+
 }
 
-vector<Cord> getPath(array<array<int, 64>, 64> map, vector<Coin> &coins, Cord from) {
+vector<Cords> getPath(array<array<int, 64>, 64> map, vector<Cord> &coins, vector<Cords> &visitedCoins, Cords from) {
     vector<Entry> visited(64 * 64);
-    Cord res(0, 0);
-    getPath(map, visited, coins, from, res);
+    Cords start = from;
+    Cords res(0, 0);
+    getPath(map, visited, coins, visitedCoins, from, res);
     int i = 0;
     int y = 0;
 
+    /*
+    for (int x = 0; x < 64; x++) {
+        for (int j = 0; j < 64; j++) {
+            if (x == res.y && res.x == j) {
+                cout << "X";
+            } else if (x == from.y && j == from.x) {
+                cout << "X";
+            } else {
+                cout << visited[64 * x + j].marked;
+            }
+        }
+        cout << endl;
+    }*/
 
-    vector<Cord> result;
-    if (visited[res.y * 64 + res.x].pre != (Cord(-1, -1))) {
+
+    vector<Cords> result;
+    if (visited[res.y * 64 + res.x].pre != (Cords(-1, -1))) {
         while (res != from) {
             result.push_back(res);
             res = visited[64 * res.y + res.x].pre;
@@ -225,7 +250,7 @@ vector<int> changeDirection(int start, int target) {
     return res;
 }
 
-void buildDrivePath(vector<Cord> Path, Cord myCords, int direct) {
+void buildDrivePath(vector<Cords> Path, Cords myCords, int direct, json &output, vector<Cords> &visitedCoins) {
     /*for (auto val : Path) {
         cout << val << ",";
     }
@@ -233,15 +258,15 @@ void buildDrivePath(vector<Cord> Path, Cord myCords, int direct) {
      */
     if (Path.empty()) {
         //cout << "Target erreicht" << endl;
-        //cout << myCords.x << " : " << myCords.y << endl;
+        //cout << myCordss.x << " : " << myCordss.y << endl;
         return;
     }
-    if (Path[0] == myCords) {
+    if (myCords == Path[0]) {
         //cout << "same cord" << endl;
         // Reached target
         Path.erase(Path.begin());
     } else {
-        Cord difference = Path[0] - myCords;
+        Cords difference = Path[0] - myCords;
         string target;
         if (difference.x == 1 && difference.y == 0) {
             // Move to east
@@ -270,15 +295,18 @@ void buildDrivePath(vector<Cord> Path, Cord myCords, int direct) {
         }
         vector<int> dir = changeDirection(direct, directionToInt(target));
         if (dir.empty()) {
+            output.push_back("f");
             cout << "[forward]" << ",";
             myCords = myCords + difference;
             Path.erase(Path.begin());
         } else {
             for (auto val : dir) {
                 if (val == -1) {
+                    output.push_back("l");
                     cout << "[left]" << ",";
                     direct--;
                 } else {
+                    output.push_back("r");
                     cout << "[right]" << ",";
                     direct++;
                 }
@@ -288,41 +316,85 @@ void buildDrivePath(vector<Cord> Path, Cord myCords, int direct) {
             } else if (direct > 7) {
                 direct = direct % 8;
             }
+            output.push_back("f");
             cout << "[forward]" << ",";
             myCords = myCords + difference;
             Path.erase(Path.begin());
         }
     }
-    buildDrivePath(Path, myCords, direct);
+    buildDrivePath(Path, myCords, direct, output, visitedCoins);
 }
 
 
 int main() {
-    SourcePirates gameObj("../test.json");
+    bool debug = false;
+    string inputPath = "../Wrapper/PHP/io/input.json";
+    string outputPath = "../Wrapper/PHP/cheat.json";
+    string tempPath = "../Wrapper/PHP/temp.json";
+    if (debug) {
+        inputPath = "../test1.json";
+        outputPath = "../cheat.json";
+        tempPath = "../temp.json";
+    }
+
+
+    SourcePirates gameObj(inputPath);
     auto map = gameObj.getMap();
 
+    vector<Cords> visitedCoins;
+    ifstream inp(tempPath);
+    json j;
+    inp >> j;
+    for (auto &val : j) {
+        cout << val << endl;
+        visitedCoins.emplace_back(Cords(val["x"], val["y"]));
+    }
+
+
     //auto coins = gameObj.specials.coins;
-    Cord myCord(26, 24);
-    /*for (int i = 0; i < 64; i++) {
+    Cords myCords(0, 0);
+    auto me = gameObj.getMyPlayer();
+    auto specials = gameObj.getSpecials();
+    myCords.x = me.x;
+    myCords.y = me.y;
+    string dir = me.direction;
+    auto coins = specials.coins;
+
+    /*
+    for (int i = 0; i < 64; i++) {
+        cout << setw(3) << i << ": ";
         for (int j = 0; j < 64; j++) {
-            if (i == 26 && j == 24) {
+            if (i == 26 && j == 31) {
                 cout << "X";
             } else {
-                cout << map->at(j).at(i);
+                cout << map[j][i];
             }
         }
         cout << endl;
     }*/
 
-    cout << gameObj.specials << endl;
-    cout << gameObj.player << endl;
-    cout << gameObj.players << endl;
+    //cout << gameObj.specials << endl;
+    //cout << gameObj.player << endl;
+    //cout << gameObj.players << endl;
+    auto res = getPath(map, coins, visitedCoins, myCords);
+    if(res.empty()){
+        visitedCoins.push_back(myCords);
+    }
 
-    gameObj.actionFireCannon("right", 3);
-    gameObj.executeOrders();
-    //auto res = getPath(map, coins, myCord);
+    json result = R"([])"_json;
+    buildDrivePath(res, myCords, directionToInt(dir), result, visitedCoins);
+    std::ofstream out2(outputPath);
+    out2 << result << endl;
 
-    //buildDrivePath(res, myCord, directionToInt("W"));
+    json temp = R"([])"_json;
+    json temp2;
+    for (auto val : visitedCoins) {
+        temp2["x"] = val.x;
+        temp2["y"] = val.y;
+        temp.push_back(temp2);
+    }
+    std::ofstream out1(tempPath);
+    out1 << temp << endl;
 
     return 0;
 }
